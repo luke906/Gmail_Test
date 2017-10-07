@@ -161,7 +161,12 @@ def test_unread_message():
     unread_msgs = service.users().messages().list(userId='me', labelIds=[label_id_one, label_id_two]).execute()
 
     # We get a dictonary. Now reading values for the key 'messages'
-    mssg_list = unread_msgs['messages']
+    try:
+        mssg_list = unread_msgs['messages']
+    except:
+        print("there is no new messages")
+        return
+
 
     print("Total unread messages in inbox: ", str(len(mssg_list)))
 
