@@ -22,8 +22,8 @@ service = None
 # If modifying these scopes, delete your previously saved credentials
 # at ~/.credentials/gmail-python-quickstart.json
 SCOPES = 'https://mail.google.com/'
-CLIENT_SECRET_FILE = 'client_secret.json'
-APPLICATION_NAME = 'Gmail_API'
+CLIENT_SECRET_FILE = 'client_secret_chargerunit03.json'
+APPLICATION_NAME = 'Gmail_API_chargerunit03'
 _REQUEST_TOKEN_VALUE = None
 
 def get_credentials():
@@ -50,7 +50,7 @@ def get_credentials():
         if flags:
             credentials = tools.run_flow(flow, store, flags)
         else:  # Needed only for compatibility with Python 2.6
-            credentials = tools.run(flow, store)
+            credentials = tools.run_flow(flow, store)
         print('Storing credentials to ' + credential_path)
     return credentials
 
