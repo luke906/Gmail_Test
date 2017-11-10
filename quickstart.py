@@ -1,25 +1,19 @@
 from __future__ import print_function
-import httplib2
-import os
+import lxml.etree
+import lxml.html
 import base64
-import email
+import os
+import argparse
+import dateutil.parser as parser
+import httplib2
 from apiclient import discovery
+from apiclient import errors
+from bs4 import BeautifulSoup
 from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
-from apiclient import errors
-from bs4 import BeautifulSoup
-
-import re
-import time
-import dateutil.parser as parser
-from datetime import datetime
-import datetime
-import csv
 
 try:
-    import argparse
-
     flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
 except ImportError:
     flags = None
@@ -30,7 +24,7 @@ service = None
 SCOPES = 'https://mail.google.com/'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Gmail_API'
-
+_REQUEST_TOKEN_VALUE = None
 
 def get_credentials():
     """Gets valid user credentials from storage.
@@ -61,11 +55,11 @@ def get_credentials():
     return credentials
 
 
-def ListMessagesMatchingQuery(service, user_id, query=''):
+def ListMessagesMatchingQuery(_service, user_id, query=''):
     """List all Messages of the user's mailbox matching the query.
 
   Args:
-    service: Authorized Gmail API service instance.
+    _service: Authorized Gmail API _service instance.
     user_id: User's email address. The special value "me"
     can be used to indicate the authenticated user.
     query: String used to filter messages returned.
@@ -77,16 +71,16 @@ def ListMessagesMatchingQuery(service, user_id, query=''):
     appropriate ID to get the details of a Message.
   """
     try:
-        response = service.users().messages().list(userId=user_id,
-                                                   q=query).execute()
+        response = _service.users().messages().list(userId=user_id,
+                                                    q=query).execute()
         messages = []
         if 'messages' in response:
             messages.extend(response['messages'])
 
         while 'nextPageToken' in response:
             page_token = response['nextPageToken']
-            response = service.users().messages().list(userId=user_id, q=query,
-                                                       pageToken=page_token).execute()
+            response = _service.users().messages().list(userId=user_id, q=query,
+                                                        pageToken=page_token).execute()
             messages.extend(response['messages'])
 
         return messages
@@ -94,7 +88,7 @@ def ListMessagesMatchingQuery(service, user_id, query=''):
         print("An error occurred: %s" % error)
 
 
-def ListMessagesWithLabels(service, user_id, label_ids=[]):
+def ListMessagesWithLabels(_service, user_id, label_ids=[]):
     """List all Messages of the user's mailbox with label_ids applied.
 
   Args:
@@ -109,7 +103,7 @@ def ListMessagesWithLabels(service, user_id, label_ids=[]):
     appropriate id to get the details of a Message.
   """
     try:
-        response = service.users().messages().list(userId=user_id,
+        response = _service.users().messages().list(userId=user_id,
                                                    labelIds=label_ids).execute()
         messages = []
         if 'messages' in response:
@@ -117,7 +111,7 @@ def ListMessagesWithLabels(service, user_id, label_ids=[]):
 
         while 'nextPageToken' in response:
             page_token = response['nextPageToken']
-            response = service.users().messages().list(userId=user_id,
+            response = _service.users().messages().list(userId=user_id,
                                                        labelIds=label_ids,
                                                        pageToken=page_token).execute()
             messages.extend(response['messages'])
@@ -127,7 +121,7 @@ def ListMessagesWithLabels(service, user_id, label_ids=[]):
         print("An error occurred: %s" % error)
 
 
-def GetMessage(service, user_id, msg_id):
+def GetMessage(_service, user_id, msg_id):
     """Get a Message with given ID.
 
   Args:
@@ -140,7 +134,7 @@ def GetMessage(service, user_id, msg_id):
     A Message.
   """
     try:
-        message = service.users().messages().get(userId=user_id, id=msg_id).execute()
+        message = _service.users().messages().get(userId=user_id, id=msg_id).execute()
 
         print("Message snippet: %s" % message['snippet'])
 
@@ -152,6 +146,9 @@ def GetMessage(service, user_id, msg_id):
 
 
 def test_unread_message():
+
+    global _REQUEST_TOKEN_VALUE
+
     user_id = 'me'
     label_id_one = 'INBOX'
     label_id_two = 'UNREAD'
@@ -216,6 +213,7 @@ def test_unread_message():
             clean_two = base64.b64decode(bytes(clean_one, 'UTF-8'))  # decoding from Base64 to UTF-8
             soup = BeautifulSoup(clean_two, "lxml")
             mssg_body = soup.body()
+
             # mssg_body is a readible form of message body
             # depending on the end user's requirements, it can be further cleaned
             # using regex, beautiful soup, or any other method
@@ -224,7 +222,14 @@ def test_unread_message():
         except:
             pass
 
-        print(temp_dict)
+        print(temp_dict['Snippet'])
+
+        for sub in temp_dict['Snippet'].split(' '):
+            if len(sub) == 32:
+                _REQUEST_TOKEN_VALUE = sub
+
+
+
         final_list.append(temp_dict)  # This will create a dictonary item in the final list
 
         # This will mark the messagea as read
@@ -250,6 +255,8 @@ def main():
     labels = results.get('labels', [])
 
     test_unread_message()
+
+    print("Request Token is : %s" % _REQUEST_TOKEN_VALUE)
 
     """
     if not labels:
