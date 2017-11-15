@@ -21,9 +21,10 @@ except ImportError:
 service = None
 # If modifying these scopes, delete your previously saved credentials
 # at ~/.credentials/gmail-python-quickstart.json
-SCOPES = 'https://mail.google.com/'
-CLIENT_SECRET_FILE = 'client_secret_chargerunit05.json'
-APPLICATION_NAME = 'Gmail_API_chargerunit05'
+SCOPES = "https://mail.google.com/"
+CLIENT_SECRET_FILE = "client_secret_chargerunit01.json"
+APPLICATION_NAME = "Gmail_API_chargerunit01"
+CREDENTIAL_FILE = "gmail-python-chargerunit01.json"
 _REQUEST_TOKEN_VALUE = None
 
 def get_credentials():
@@ -39,8 +40,7 @@ def get_credentials():
     credential_dir = os.path.join(home_dir, '.credentials')
     if not os.path.exists(credential_dir):
         os.makedirs(credential_dir)
-    credential_path = os.path.join(credential_dir,
-                                   'gmail-python-chargerunit05.json')
+    credential_path = os.path.join(credential_dir, CREDENTIAL_FILE)
 
     store = Storage(credential_path)
     credentials = store.get()
