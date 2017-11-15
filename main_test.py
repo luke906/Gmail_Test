@@ -33,10 +33,10 @@ def get_airbit_token_value(secret_json_file):
 
     return _REQUEST_TOKEN_VALUE
 
-def get_token():
+def get_token(json_file_name):
 
     global token_value
-    token_value = get_airbit_token_value("gmail-python-chargerunit03.json")
+    token_value = get_airbit_token_value(json_file_name)
     #token_value = get_airbit_token_value("gmail-python-chargerunit03.json")
 
 def main():
@@ -44,11 +44,11 @@ def main():
     global sched
     global token_value
 
-    get_token()
+    get_token('gmail-python-chargerunit03.json')
 
     sched = BlockingScheduler()
 
-    sched.add_job(get_token, "interval", seconds=5, id="token_job")
+    sched.add_job(get_token, "interval", seconds=5, id="token_job", args=(json_file_name))
     sched.start()
 
     print("job finished!")
