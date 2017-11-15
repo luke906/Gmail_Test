@@ -22,9 +22,9 @@ service = None
 # If modifying these scopes, delete your previously saved credentials
 # at ~/.credentials/gmail-python-quickstart.json
 SCOPES = "https://mail.google.com/"
-CLIENT_SECRET_FILE = "client_secret_chargerunit01.json"
-APPLICATION_NAME = "Gmail_API_chargerunit01"
-CREDENTIAL_FILE = "gmail-python-chargerunit01.json"
+CLIENT_SECRET_FILE = "client_secret_chargerunit03.json"
+APPLICATION_NAME = "Gmail_API_chargerunit03"
+CREDENTIAL_FILE = "gmail-python-chargerunit03.json"
 _REQUEST_TOKEN_VALUE = None
 
 def get_credentials():

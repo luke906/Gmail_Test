@@ -15,19 +15,16 @@ from oauth2client.file import Storage
 
 class Gmail_Manager:
 
-    def __init__(self, secret_json_file):
+    def __init__(self):
         try:
             self.flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
         except ImportError:
             self.flags = None
 
         self.service = None
-        self.secret_json_file = secret_json_file
-
-        self.get_credentials()
 
     # ex: secret_json_file -> 'gmail-python-chargerunit05.json'
-    def get_credentials(self):
+    def get_credentials(self, secret_json_file):
         """Gets valid user credentials from storage.
 
         If nothing has been stored, or if the stored credentials are invalid,
@@ -41,7 +38,7 @@ class Gmail_Manager:
         if not os.path.exists(credential_dir):
             os.makedirs(credential_dir)
         credential_path = os.path.join(credential_dir,
-                                       self.secret_json_file)
+                                       secret_json_file)
 
         store = Storage(credential_path)
         credentials = store.get()
@@ -238,7 +235,7 @@ class Gmail_Manager:
             final_list.append(temp_dict)  # This will create a dictonary item in the final list
 
             # This will mark the messagea as read
-            # self.service.users().messages().modify(userId=user_id, id=m_id, body={'removeLabelIds': ['UNREAD']}).execute()
+            self.service.users().messages().modify(userId=user_id, id=m_id, body={'removeLabelIds': ['UNREAD']}).execute()
 
         print("Total messaged retrived: ", str(len(final_list)))
 
