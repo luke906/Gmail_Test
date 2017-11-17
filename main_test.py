@@ -1,13 +1,14 @@
 from Gmail_Manager_Class import Gmail_Manager
 from Schedule_Manager_Class import Schedule_Manager
 
-sched = None
+
 _REQUEST_TOKEN_VALUE = None
 
 scheduler = Schedule_Manager()
 
 def get_airbit_token_value(secret_json_file):
 
+    global scheduler
     print("get_airbit_token_value JOB START!")
 
     global sched
@@ -34,14 +35,23 @@ def get_airbit_token_value(secret_json_file):
                                       len(sub) == 32:
                 _REQUEST_TOKEN_VALUE = sub
                 scheduler.kill_scheduler("token_job")
+                scheduler.shutdown_schedule()
                 print("Request Token is : %s" % _REQUEST_TOKEN_VALUE)
                 print("get_airbit_token_value JOB STOP!")
                 break
 
 
 def main():
+    global scheduler
 
+    print("000")
     scheduler.start_scheduler(get_airbit_token_value, 'interval', "token_job", 3, "gmail-python-chargerunit01.json")
+
+    while 1:
+        if _REQUEST_TOKEN_VALUE != None:
+            break
+
+    print("111")
 
 
 if __name__ == '__main__':
