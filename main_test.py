@@ -2,13 +2,13 @@ from Gmail_Manager_Class import Gmail_Manager
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 sched = None
-token_value = None
+_REQUEST_TOKEN_VALUE = None
 
 def get_airbit_token_value(secret_json_file):
 
     global sched
-
-    print("get_airbit_token_value JOB START!")
+    global _REQUEST_TOKEN_VALUE
+    print("JOB START!")
     _REQUEST_TOKEN_VALUE = None
     Gmail = Gmail_Manager()
     Gmail.get_credentials(secret_json_file)
@@ -27,36 +27,34 @@ def get_airbit_token_value(secret_json_file):
             # 전송자가 에어비트이고 메세지 본문중 32자리 토큰 이라면
             if len(sub) == 32 and message_list[0]['Sender'] == "<servers@bitbackoffice.com>":
                 _REQUEST_TOKEN_VALUE = sub
-                print("Request Token is : %s" % _REQUEST_TOKEN_VALUE)
-                print("get_airbit_token_value JOB STOP!")
-                sched.remove_job("token_job")
-
-    return _REQUEST_TOKEN_VALUE
+                mail_schedule_stop()
+                #print("Request Token is : %s" % _REQUEST_TOKEN_VALUE)
+                #print("get_airbit_token_value JOB STOP!")
+                break
 
 def get_token(str_json_file_name):
+    get_airbit_token_value(str_json_file_name)
 
-    global token_value
-    token_value = get_airbit_token_value(str_json_file_name)
-
-def mail_schedule_start(str_json_file_name):
-    sched = BlockingScheduler()
-
-    sched.add_job(get_token, "interval", seconds=3, id="token_job", args=[str_json_file_name])
-    sched.start()
-
-
-def main():
-
+def mail_schedule_stop():
     global sched
     global token_value
 
-    mail_schedule_start("gmail-python-chargerunit03.json")
-
     print("job finished!")
-    print("Request Token is : %s" % token_value)
+    print("Request Token is : %s" % _REQUEST_TOKEN_VALUE)
 
+    sched.remove_job("token_job")
 
+def mail_schedule_start(str_json_file_name, interval_time):
 
+    global sched
+    sched = BlockingScheduler()
+
+    sched.add_job(get_token, "interval", seconds=interval_time, id="token_job", args=[str_json_file_name])
+    sched.start()
+
+def main():
+
+    token = mail_schedule_start("gmail-python-chargerunit01.json", 3)
 
 
 
