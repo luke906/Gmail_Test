@@ -22,10 +22,12 @@ def get_airbit_token_value(secret_json_file):
 
         message_list = Gmail.get_unread_message()
         # 32자리 토큰을 구한다.
-        # 메세지 간략 보기 내용을 스페이스로 구분하여 모두 검사한다.
+        # 가장 최신의 첫번째 메일의 메세지 간략 보기 내용을 스페이스로 구분하여 모두 검사한다.
         for sub in message_list[0]['Snippet'].split(' '):
-            # 전송자가 에어비트이고 메세지 본문중 32자리 토큰 이라면
-            if len(sub) == 32 and message_list[0]['Sender'] == "<servers@bitbackoffice.com>":
+            #수신 메일의 제목에 "Token"이 들어가 있는지 검사, 전송자가 에어비트이고 메세지 본문중 32자리 토큰 이라면
+            if message_list[0]['Subject'][0:5] == "Token" and \
+                     message_list[0]['Sender'] == "<servers@bitbackoffice.com>" and \
+                                      len(sub) == 32:
                 _REQUEST_TOKEN_VALUE = sub
                 mail_schedule_stop()
                 #print("Request Token is : %s" % _REQUEST_TOKEN_VALUE)
@@ -39,7 +41,7 @@ def mail_schedule_stop():
     global sched
     global token_value
 
-    print("job finished!")
+    print("JOB FINISHED!")
     print("Request Token is : %s" % _REQUEST_TOKEN_VALUE)
 
     sched.remove_job("token_job")
@@ -55,10 +57,6 @@ def mail_schedule_start(str_json_file_name, interval_time):
 def main():
 
     token = mail_schedule_start("gmail-python-chargerunit01.json", 3)
-
-
-
-
 
     """
     
