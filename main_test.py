@@ -1,14 +1,18 @@
 from Gmail_Manager_Class import Gmail_Manager
-from apscheduler.schedulers.blocking import BlockingScheduler
+from Schedule_Manager_Class import Schedule_Manager
 
 sched = None
 _REQUEST_TOKEN_VALUE = None
 
+scheduler = Schedule_Manager()
+
 def get_airbit_token_value(secret_json_file):
+
+    print("get_airbit_token_value JOB START!")
 
     global sched
     global _REQUEST_TOKEN_VALUE
-    print("JOB START!")
+
     _REQUEST_TOKEN_VALUE = None
     Gmail = Gmail_Manager()
     Gmail.get_credentials(secret_json_file)
@@ -29,52 +33,15 @@ def get_airbit_token_value(secret_json_file):
                      message_list[0]['Sender'] == "<servers@bitbackoffice.com>" and \
                                       len(sub) == 32:
                 _REQUEST_TOKEN_VALUE = sub
-                mail_schedule_stop()
-                #print("Request Token is : %s" % _REQUEST_TOKEN_VALUE)
-                #print("get_airbit_token_value JOB STOP!")
+                scheduler.kill_scheduler("token_job")
+                print("Request Token is : %s" % _REQUEST_TOKEN_VALUE)
+                print("get_airbit_token_value JOB STOP!")
                 break
 
-def get_token(str_json_file_name):
-    get_airbit_token_value(str_json_file_name)
-
-def mail_schedule_stop():
-    global sched
-    global token_value
-
-    print("JOB FINISHED!")
-    print("Request Token is : %s" % _REQUEST_TOKEN_VALUE)
-
-    sched.remove_job("token_job")
-
-def mail_schedule_start(str_json_file_name, interval_time):
-
-    global sched
-    sched = BlockingScheduler()
-
-    sched.add_job(get_token, "interval", seconds=interval_time, id="token_job", args=[str_json_file_name])
-    sched.start()
 
 def main():
 
-    token = mail_schedule_start("gmail-python-chargerunit01.json", 3)
-
-    """
-    
-    
-    if not labels:
-        print('No labels found.')
-    else:
-        print('Labels:')
-        for label in labels:
-            print(label['name'])
-
-    lable_id = ['INBOX']
-    messages_list = ListMessagesWithLabels(service, 'me', lable_id)
-    print(messages_list)
-
-    message = GetMessage(service, 'me', '15ef61246bfe2e4f')
-    # print(message['parts'])
-    """
+    scheduler.start_scheduler(get_airbit_token_value, 'interval', "token_job", 3, "gmail-python-chargerunit01.json")
 
 
 if __name__ == '__main__':

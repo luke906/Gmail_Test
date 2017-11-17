@@ -37,20 +37,22 @@ class Schedule_Manager(object):
     # 인수값이 cron일 경우, 날짜, 요일, 시간, 분, 초 등의 형식으로 지정하여,
     # 특정 시각에 실행되도록 합니다.(cron과 동일)
     # interval의 경우, 설정된 시간을 간격으로 일정하게 실행실행시킬 수 있습니다.
-    def start_scheduler(self, function, type, job_id, interval_time=5, day_interval=None, hour=None, sec=None):
+    def start_scheduler(self, function, type, job_id, interval_time=5, args_value=None, day_interval=None, hour=None, sec=None):
 
         #print("Scheduler Start")
         if type == 'interval':
             self.sched.add_job(function,
                                         type,
                                         seconds=interval_time,
-                                        id=job_id)
+                                        id=job_id,
+                                        args=[args_value])
         elif type == 'cron':
             self.sched.add_job(function,
                                         type,
                                         day_of_week=day_interval,
                                         hour=hour,
                                         second=sec,
-                                        id=job_id)
+                                        id=job_id,
+                                        args=[args_value])
 
         self.sched.start()
