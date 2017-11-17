@@ -35,7 +35,7 @@ def get_airbit_token_value(secret_json_file):
                                       len(sub) == 32:
                 _REQUEST_TOKEN_VALUE = sub
                 scheduler.kill_scheduler("token_job")
-                scheduler.shutdown_schedule()
+                # scheduler.shutdown_schedule()
                 print("Request Token is : %s" % _REQUEST_TOKEN_VALUE)
                 print("get_airbit_token_value JOB STOP!")
                 break
@@ -43,12 +43,14 @@ def get_airbit_token_value(secret_json_file):
 
 def main():
     global scheduler
+    global _REQUEST_TOKEN_VALUE
 
     print("000")
     scheduler.start_scheduler(get_airbit_token_value, 'interval', "token_job", 3, "gmail-python-chargerunit01.json")
 
+
     while 1:
-        if _REQUEST_TOKEN_VALUE != None:
+        if _REQUEST_TOKEN_VALUE != None and len(_REQUEST_TOKEN_VALUE) == 32:
             break
 
     print("111")
