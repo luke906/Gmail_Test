@@ -22,8 +22,14 @@ service = None
 # If modifying these scopes, delete your previously saved credentials
 # at ~/.credentials/gmail-python-quickstart.json
 SCOPES = "https://mail.google.com/"
+
+# 실제로 다운받은 JSON 파일
 CLIENT_SECRET_FILE = "client_secret_wso21462.json"
+
+# GMail API 에서 설정한 서비스 이름
 APPLICATION_NAME = "Gmail_API_wso21462"
+
+# 최종 모든 사용권한 인증후 C:\Users\USER\.credentials 위치에 생성될 json 파일 (실제 이파일이 서비스에 사용됨)
 CREDENTIAL_FILE = "gmail-python-wso21462.json"
 _REQUEST_TOKEN_VALUE = None
 
