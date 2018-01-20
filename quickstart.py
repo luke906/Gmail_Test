@@ -24,13 +24,13 @@ service = None
 SCOPES = "https://mail.google.com/"
 
 # 실제로 다운받은 JSON 파일
-CLIENT_SECRET_FILE = "client_secret_lobist77.json"
+CLIENT_SECRET_FILE = "client_secret_gim3117.json"
 
 # GMail API 에서 설정한 서비스 이름
-APPLICATION_NAME = "Gmail_API_lobist77"
+APPLICATION_NAME = "Gmail_API_gim3117"
 
 # 최종 모든 사용권한 인증후 C:\Users\USER\.credentials 위치에 생성될 json 파일 (실제 이파일이 서비스에 사용됨)
-CREDENTIAL_FILE = "gmail-python-lobist77.json"
+CREDENTIAL_FILE = "gmail-python-gim3117.json"
 _REQUEST_TOKEN_VALUE = None
 
 def get_credentials():
